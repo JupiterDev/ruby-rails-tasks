@@ -13,11 +13,7 @@ class Station
 
   # кол-во поездов на станции по типу
   def trains_by_type(type)
-    trains_count = 0
-    @trains.each do |train|
-      (train.type == type) ? (trains_count += 1) : next
-    end
-    return "Число поездов с типом #{type}: #{trains_count}"
+    @trains.select{|train| train.type == type}.length 
   end
 
   # отправка поезда
@@ -28,46 +24,43 @@ class Station
 end
 
 class Route
-  attr_reader :start_station, :finish_station
+  attr_reader :stations
 
   def initialize(start_station, finish_station)
-    @start_station = start_station
-    @finish_station = finish_station
-    @intermediate_stations = []
+    @stations = [start_station, finish_station]
+  end
+
+  def first_station
+    @stations.first
+  end
+
+  def finish_station
+    @stations.last
   end
 
   #добавить станцию в промежуточный маршрут
   def add_station(station)
-    (!@intermediate_stations.include?(station) && (station != @start_station) && (station != @finish_station)) ? (@intermediate_stations << station) : (puts "Данная станция уже есть в промежуточном маршрует или это начальная/конечная станция.")
+    if !@stations.include?(station)
+      @stations.insert(-2, station)
+    end
   end
 
   #удалить станцию из промежуточного маршрута
   def remove_station(station)
-    @intermediate_stations.include?(station) ? @intermediate_stations.delete(station) : (puts "Невозможно удалить станцию, которой нет в промежуточном маршруте.")
-  end
-
-  #вывод всех станций маршрута (только названия)
-  def stations
-    puts @start_station.name
-    @intermediate_stations.each do |station|
-      puts station.name
-    end  
-    puts @finish_station.name
-  end
-
-  #вывод маршрута в виде массива
-  def route_arr
-    full_route = []
-    full_route << @start_station
-    @intermediate_stations.each do |station|
-      full_route << station
+    if (@stations.include?(station) && (station != @stations.first) && (station != @stations.last))
+      @stations.delete(station)
     end
-    full_route << @finish_station
   end
+
+  def show_stantions
+    puts @stations
+  end  
+
 end
 
 class Train
   attr_reader :current_speed, :type, :car_count, :current_station
+  attr_writer :route
 
   def initialize(number, type, car_count, route = nil)
     @number = number
@@ -75,84 +68,59 @@ class Train
     @car_count = car_count
     @route = route
     @current_speed = 0
-    @current_station = route.start_station if route
+    @current_station = 0 if route
+    @route.first_station.add_train(self) if @route
   end
 
   #набор скорости
-  def increase_speed
-    @current_speed += 10
+  def increase_speed(value)
+    @current_speed += value
   end
 
   #торможение
-  def stop
-    @current_speed = 0
+  def decrease_speed(value)
+    @current_speed -= value
   end
 
   #прицепить вагон
   def add_car
-    @current_speed == 0 ? @car_count += 1 : (puts "Невозможно прицепить вагон на ходу.")
+    (@car_count += 1) if @current_speed == 0
   end
 
   #отцепить вагон
   def remove_car
-    if (@current_speed == 0 && @car_count > 0)
-      @car_count-= 1
-    elsif @current_speed > 0
-      puts "Невозможно отцепить вагон на ходу."
-    elsif @car_count == 0
-      puts "Невозможно отцепить вагон, потому что в поезде нет вагонов"
-    end
+    (@car_count -= 1) if (@current_speed == 0 && @car_count > 0)
   end
 
-  #переместиться на следующую станцую маршрута
+  #переместиться на следующую станцию маршрута
   def move_to_the_next_station
-    if @route
-      if @current_station != @route.finish_station
-        @current_station = @route.route_arr[@route.route_arr.find_index(@current_station) + 1]
-      else
-        puts "Конечная. Следующей станции нет."
-      end
-    else
-      puts "Маршрут дя поезда не задан."
+    if @route && (@route.stations[@current_station] != @route.finish_station)
+      @route.stations[@current_station].launch_train(self)
+      @route.stations[@current_station + 1].add_train(self)
+      @current_station += 1
     end
   end
 
-  #переместиться на предыдущую станцую маршрута
+  #переместиться на предыдущую станцию маршрута
   def move_to_the_previous_station
-    if @route
-      if @current_station != @route.start_station
-        @current_station = @route.route_arr[@route.route_arr.find_index(@current_station) - 1]
-      else
-        puts "Это первая станция в маршруте."
-      end
-    else
-      puts "Маршрут дя поезда не задан."
+    if @route && (@route.stations[@current_station] != @route.first_station)
+      @route.stations[@current_station].launch_train(self)
+      @route.stations[@current_station - 1].add_train(self)
+      @current_station -= 1
     end
   end
 
-  #показать следующую станцию маршрута
+  #следующая станция маршрута
   def next_station
-    if @route
-      if @current_station != @route.finish_station
-        puts @route.route_arr[@route.route_arr.find_index(@current_station) + 1]
-      else
-        puts "Конечная. Следующей станции нет."
-      end
-    else
-      puts "Маршрут дя поезда не задан."
+    if @route && (@route.stations[@current_station] != @route.finish_station)
+      return @route.stations[@current_station + 1]
     end
   end
 
-  #показать предыдущую станцию маршрута
+  #предыдущая станция маршрута
   def previous_station
-    if @route
-      if @current_station != @route.start_station
-        puts @route.route_arr[@route.route_arr.find_index(@current_station) - 1]
-      elsif
-        puts "Это первая станция в маршруте."
-      end
-    else
-      puts "Маршрут дя поезда не задан."
+    if @route && (@route.stations[@current_station] != @route.first_station)
+      return @route.stations[@current_station - 1]
     end
   end
 
