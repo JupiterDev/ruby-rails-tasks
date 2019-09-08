@@ -13,13 +13,13 @@ class Station
 
   # кол-во поездов на станции по типу
   def trains_by_type(type)
-    @trains.select{|train| train.type == type}.length 
+    @trains.count { |train| train.type == type }
   end
 
   # отправка поезда
   def launch_train(train)
-    trains.include?(train) ? trains.delete(train) : (puts "Данного поезда нет на станции.")
-  end 
+    @trains.delete(train)
+  end
 
 end
 
@@ -40,36 +40,40 @@ class Route
 
   #добавить станцию в промежуточный маршрут
   def add_station(station)
-    if !@stations.include?(station)
-      @stations.insert(-2, station)
-    end
+    @stations.insert(-2, station) unless @stations.include?(station)
   end
 
   #удалить станцию из промежуточного маршрута
   def remove_station(station)
-    if (@stations.include?(station) && (station != @stations.first) && (station != @stations.last))
+    if (station != @stations.first) && station != @stations.last
       @stations.delete(station)
     end
   end
 
-  def show_stantions
+  #вывести список всех станций
+  def show_stations
     puts @stations
-  end  
+  end
 
 end
 
 class Train
   attr_reader :current_speed, :type, :car_count, :current_station
-  attr_writer :route
 
   def initialize(number, type, car_count, route = nil)
     @number = number
-    (type == "freight" || type == "passenger") ? (@type = type) : (raise 'Аргумент type задан неверно.')
+    @type = type
     @car_count = car_count
     @route = route
     @current_speed = 0
-    @current_station = 0 if route
-    @route.first_station.add_train(self) if @route
+    @current_station = 0
+    @route&.first_station&.add_train(self)
+  end
+
+  #добавление пути и выполнение "прибытия поезда" на станцию
+  def set_route(value)
+    @route = value
+    @route.stations.first.add_train(self)
   end
 
   #набор скорости
@@ -79,48 +83,55 @@ class Train
 
   #торможение
   def decrease_speed(value)
-    @current_speed -= value
+    (@current_speed -= value) if @current_speed.positive?
   end
 
   #прицепить вагон
   def add_car
-    (@car_count += 1) if @current_speed == 0
+    (@car_count += 1) if @current_speed.zero?
   end
 
   #отцепить вагон
   def remove_car
-    (@car_count -= 1) if (@current_speed == 0 && @car_count > 0)
+    (@car_count -= 1) if @current_speed.zero? && @car_count.positive?
   end
 
   #переместиться на следующую станцию маршрута
   def move_to_the_next_station
-    if @route && (@route.stations[@current_station] != @route.finish_station)
-      @route.stations[@current_station].launch_train(self)
-      @route.stations[@current_station + 1].add_train(self)
+    if @route && (current_station != @route.finish_station)
+      current_station.launch_train(self)
+      next_station.add_train(self)
       @current_station += 1
     end
   end
 
   #переместиться на предыдущую станцию маршрута
   def move_to_the_previous_station
-    if @route && (@route.stations[@current_station] != @route.first_station)
-      @route.stations[@current_station].launch_train(self)
-      @route.stations[@current_station - 1].add_train(self)
+    if @route && (current_station != @route.first_station)
+      current_station.launch_train(self)
+      previous_station.add_train(self)
       @current_station -= 1
     end
   end
 
   #следующая станция маршрута
   def next_station
-    if @route && (@route.stations[@current_station] != @route.finish_station)
-      return @route.stations[@current_station + 1]
+    if @route && (current_station != @route.finish_station)
+      @route.stations[@current_station + 1]
+    end
+  end
+
+  #текущая станция
+  def current_station
+    if @route
+      @route.stations[@current_station]
     end
   end
 
   #предыдущая станция маршрута
   def previous_station
-    if @route && (@route.stations[@current_station] != @route.first_station)
-      return @route.stations[@current_station - 1]
+    if @route && (current_station != @route.first_station)
+      @route.stations[@current_station - 1]
     end
   end
 
@@ -146,7 +157,7 @@ end
 # + Может тормозить (сбрасывать скорость до нуля)
 # + Может возвращать количество вагонов
 # + Может прицеплять/отцеплять вагоны (по одному вагону за операцию, метод просто увеличивает или уменьшает количество вагонов). Прицепка/отцепка вагонов может осуществляться только если поезд не движется.
-# + Может принимать маршрут следования (объект класса Route). 
+# + Может принимать маршрут следования (объект класса Route).
 # + При назначении маршрута поезду, поезд автоматически помещается на первую станцию в маршруте.
 # + Может перемещаться между станциями, указанными в маршруте. Перемещение возможно вперед и назад, но только на 1 станцию за раз.
 # + Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
