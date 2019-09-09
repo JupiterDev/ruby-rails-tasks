@@ -45,7 +45,7 @@ class Route
 
   #удалить станцию из промежуточного маршрута
   def remove_station(station)
-    if (station != @stations.first) && station != @stations.last
+    if station != @stations.first && station != @stations.last
       @stations.delete(station)
     end
   end
@@ -58,22 +58,23 @@ class Route
 end
 
 class Train
-  attr_reader :current_speed, :type, :car_count, :current_station
+  attr_reader :current_speed, :type, :car_count
 
   def initialize(number, type, car_count, route = nil)
     @number = number
     @type = type
     @car_count = car_count
-    @route = route
     @current_speed = 0
-    @current_station = 0
-    @route&.first_station&.add_train(self)
+    set_route(route)
   end
 
   #добавление пути и выполнение "прибытия поезда" на станцию
   def set_route(value)
     @route = value
-    @route.stations.first.add_train(self)
+    if @route
+      @route.stations.first.add_train(self)
+      @current_station_index = 0
+    end
   end
 
   #набор скорости
@@ -83,17 +84,17 @@ class Train
 
   #торможение
   def decrease_speed(value)
-    (@current_speed -= value) if @current_speed.positive?
+    @current_speed -= value if @current_speed >= value
   end
 
   #прицепить вагон
   def add_car
-    (@car_count += 1) if @current_speed.zero?
+    @car_count += 1 if @current_speed.zero?
   end
 
   #отцепить вагон
   def remove_car
-    (@car_count -= 1) if @current_speed.zero? && @car_count.positive?
+    @car_count -= 1 if @current_speed.zero? && @car_count.positive?
   end
 
   #переместиться на следующую станцию маршрута
@@ -101,7 +102,7 @@ class Train
     if @route && (current_station != @route.finish_station)
       current_station.launch_train(self)
       next_station.add_train(self)
-      @current_station += 1
+      @current_station_index += 1
     end
   end
 
@@ -110,28 +111,28 @@ class Train
     if @route && (current_station != @route.first_station)
       current_station.launch_train(self)
       previous_station.add_train(self)
-      @current_station -= 1
+      @current_station_index -= 1
     end
   end
 
   #следующая станция маршрута
   def next_station
     if @route && (current_station != @route.finish_station)
-      @route.stations[@current_station + 1]
+      @route.stations[@current_station_index + 1]
     end
   end
 
   #текущая станция
   def current_station
     if @route
-      @route.stations[@current_station]
+      @route.stations[@current_station_index]
     end
   end
 
   #предыдущая станция маршрута
   def previous_station
     if @route && (current_station != @route.first_station)
-      @route.stations[@current_station - 1]
+      @route.stations[@current_station_index - 1]
     end
   end
 
