@@ -1,9 +1,9 @@
 class Train
-	attr_reader :number, :current_speed, :car_count
+	attr_reader :number, :current_speed, :cars
   
-	def initialize(number, car_count, route = nil)
+	def initialize(number, route = nil)
 	  @number = number
-    @car_count = car_count
+    @cars = {}
 	  @current_speed = 0
 	  set_route(route)
 	end
@@ -67,13 +67,13 @@ class Train
   end
 
   #прицепить вагон
-	def add_car
-	  @car_count += 1 if @current_speed.zero?
+	def add_car(car)
+    @cars[car] = Car.new if @current_speed.zero?
 	end
   
 	#отцепить вагон
-	def remove_car
-	  @car_count -= 1 if @current_speed.zero? && @car_count.positive?
+	def remove_car(car)
+	  @cars.delete(car) if @current_speed.zero?
 	end
   
 end

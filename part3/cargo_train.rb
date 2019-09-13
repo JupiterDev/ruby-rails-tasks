@@ -2,14 +2,14 @@ class CargoTrain < Train
   def initialize(number, route = nil)
     @number = number
     @route = route
-    @cars = []
+    @cars = {}
   end
 
-  def add_car
-    @cars << CargoCar.new
+  def add_car(car)
+    @cars[car] = CargoCar.new
   end
 
-  def remove_car
-		@cars.shift
+  def remove_car(car)
+		@cars.delete(car)
 	end
 end
