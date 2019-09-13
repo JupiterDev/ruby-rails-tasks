@@ -400,7 +400,7 @@ class Control
 #     puts "TASK 8 DONE"
 #   end
 
-# end
+end
 
 # Задание:
 
