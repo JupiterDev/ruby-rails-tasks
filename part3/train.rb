@@ -3,7 +3,7 @@ class Train
 
   def initialize(number, route = nil)
     @number = number
-    @cars = {}
+    @cars = []
     @current_speed = 0
     set_route(route)
   end
@@ -67,13 +67,25 @@ class Train
   end
 
   # прицепить вагон
-  # def add_car(car, car_number)
-  #   @cars[car_number] = car
-  # end
+  def add_car
+    if self.class == CargoTrain
+      add_car!(CargoCar.new)
+    elsif self.class == PassengerTrain
+      add_car!(PassengerCar.new)
+    end
+  end
 
   # отцепить вагон
-  def remove_car(car)
-    @cars.delete(car) if @current_speed.zero?
+  def remove_car(index)
+    @cars.delete_at(index) if @current_speed.zero?
+  end
+
+  protected
+
+  # добавлен в protected, потому что не должен быть 
+  # вызван "из вне" класса, но может быть использован в подклассах
+  def add_car!(car)
+    @cars << car
   end
 
 end

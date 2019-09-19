@@ -106,6 +106,8 @@ class Control
     elsif type == 2
       train = CargoTrain.new(number)
       @trains[train.number] = train
+    else
+      return nil
     end
     create_train_final_output(number)
   end
@@ -262,7 +264,7 @@ class Control
   end
 
   def case_4_check_route_error_output
-    puts 'Данного аршрута не найдено. Введите данные еще раз.'
+    puts 'Данный маршрут не был создан. Введите данные еще раз.'
     case_4
   end
 
@@ -278,30 +280,20 @@ class Control
     @trains[train].set_route(@routes[route_name])
   end
 
+  def somemet(car)
+    puts car
+  end
+
   ##### 5 #####
   def case_5
     case_5_choice_1_output
     train = gets.chomp
-    case_5_choice_2_output
-    car_number = gets.chomp
-    add_car(train, car_number)
+    @trains[train].add_car
     run
   end
 
   def case_5_choice_1_output
     puts 'Введите номер поезда, которому нужно добавить вагон.'
-  end
-
-  def case_5_choice_2_output
-    puts 'Введите номер вагона.'
-  end
-
-  def add_car(train, car_number)
-    if @trains[train].class == CargoTrain
-      @trains[train].add_car(CargoCar.new, car_number)
-    elsif @trains[train].class == PassengerTrain
-      @trains[train].add_car(PassengerCar.new, car_number)
-    end
   end
 
   ##### 6 #####
@@ -310,7 +302,7 @@ class Control
     train = gets.chomp
     case_6_choice_2_output
     car = gets.chomp
-    remove_car(train, car)
+    remove_car(train, car_index)
     run
   end
 
@@ -319,11 +311,11 @@ class Control
   end
 
   def case_6_choice_2_output
-    puts 'Введите номер вагона.'
+    puts 'Введите индекс вагона в поезде.'
   end
 
-  def remove_car(train, car)
-    @trains[train].remove_car(car)
+  def remove_car(train, car_index)
+    @trains[train].remove_car(car_index)
   end
 
   ##### 7 #####
@@ -365,6 +357,7 @@ class Control
     if answer == 1
       show_stations
     elsif answer == 2
+      case_8_choice_2_output
       station = gets.chomp
       show_trains(station)
     else
@@ -377,6 +370,10 @@ class Control
     puts "Что вывести?\n" \
           "1 - Cписок станций\n" \
           '2 - Список поездов на станции'
+  end
+
+  def case_8_choice_2_output
+    puts "Введите номер станции"
   end
 
   def case_8_error_output
