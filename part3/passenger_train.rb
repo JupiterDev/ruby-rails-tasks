@@ -5,11 +5,8 @@ class PassengerTrain < Train
     @cars = []
   end
 
-  # def add_car(car)
-  #   super if car.class == PassengerCar
-  # end
+  def add_car
+    super(PassengerCar.new)
+  end
 
-  # def remove_car(car)
-  #   @cars.delete(car)
-  # end
 end

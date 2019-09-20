@@ -67,12 +67,8 @@ class Train
   end
 
   # прицепить вагон
-  def add_car
-    if self.class == CargoTrain
-      add_car!(CargoCar.new)
-    elsif self.class == PassengerTrain
-      add_car!(PassengerCar.new)
-    end
+  def add_car(car)
+    add_car!(car)
   end
 
   # отцепить вагон
