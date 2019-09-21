@@ -1,11 +1,21 @@
 class Train
+  include Company
+  include InstanceCounter
+
   attr_reader :number, :current_speed, :cars
+
+  @@trains = {}
 
   def initialize(number, route = nil)
     @number = number
     @cars = []
     @current_speed = 0
+    @@trains[number] = self 
     set_route(route)
+  end
+
+  def self.find(number)
+    @@trains[number]
   end
 
   # добавление пути и выполнение "прибытия поезда" на станцию
