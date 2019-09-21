@@ -8,12 +8,13 @@ require_relative 'passenger_car'
 require_relative 'cargo_car'
 
 class Control
-  attr_reader :stations, :routes, :trains
+  attr_reader :stations, :routes, :trains, :cars
 
   def initialize
     @stations = {}
     @routes = {}
     @trains = {}
+    @cars = {}
   end
 
   def run
@@ -31,7 +32,8 @@ class Control
          "6 - Отцепить вагон от поезда\n" \
          "7 - Переместить поезд по маршруту вперед или назад\n" \
          "8 - Просмотреть список станций или список поездов на станции\n" \
-         '9 - Выход'
+         "9 - Создать вагон\n" \
+         '0 - Выход'
   end
 
   def menu_answer_handler(answer)
@@ -54,6 +56,8 @@ class Control
       case_8
     when 9
       case_9
+    when 0
+      case_0
     else
       case_10
     end
@@ -177,7 +181,7 @@ class Control
         manage_stations_check(station_name, route_name)
         remove_station(route_name, station_name)
       elsif answer != 3
-        manage_stations_error_output
+        incorrect_input_error_message
       end
       manage_stations_final_output
     end until answer == 3
@@ -205,10 +209,6 @@ class Control
 
   def manage_stations_choice_2_output
     puts 'Введите название станции, которую хотитие удалить.'
-  end
-
-  def manage_stations_error_output
-    puts 'Некорректный ввод.'
   end
 
   def manage_stations_final_output
@@ -288,12 +288,18 @@ class Control
   def case_5
     case_5_choice_1_output
     train = gets.chomp
-    @trains[train].add_car
+    case_5_choice_2_output
+    car = gets.chomp
+    @trains[train].add_car(@cars[car]) if @cars[car] && @trains[train]
     run
   end
 
   def case_5_choice_1_output
     puts 'Введите номер поезда, которому нужно добавить вагон.'
+  end
+
+  def case_5_choice_2_output
+    puts 'Введите номер вагона.'
   end
 
   ##### 6 #####
@@ -302,7 +308,7 @@ class Control
     train = gets.chomp
     case_6_choice_2_output
     car = gets.chomp
-    remove_car(train, car_index)
+    @trains[train].remove_car(@cars[car]) if @cars[car] && @trains[train]
     run
   end
 
@@ -311,7 +317,7 @@ class Control
   end
 
   def case_6_choice_2_output
-    puts 'Введите индекс вагона в поезде.'
+    puts 'Введите номер вагона.'
   end
 
   def remove_car(train, car_index)
@@ -323,7 +329,7 @@ class Control
     case_7_choice_1_output
     number = gets.chomp
     case_7_choice_2_output
-    way = gets.to_i
+    way = gets.chomp
     if way == 1
       move_train_forward(number)
     elsif way == 2
@@ -361,7 +367,7 @@ class Control
       station = gets.chomp
       show_trains(station)
     else
-      case_8_error_output
+      incorrect_input_error_message
     end
     run
   end
@@ -376,10 +382,6 @@ class Control
     puts "Введите номер станции"
   end
 
-  def case_8_error_output
-    puts 'Некорректный ввод'
-  end
-
   def show_stations
     puts @stations
   end
@@ -388,14 +390,48 @@ class Control
     puts @stations[station].trains
   end
 
-  ##### 8 #####
+  ##### 9 #####
   def case_9
+    case_9_choice_1_output
+    car_type = gets.chomp
+    case_9_choice_2_output
+    number = gets.chomp
+    if car_type == "1"
+      puts "1"
+      @cars[number] = PassengerCar.new
+      puts @cars[number]
+    elsif car_type == "2"
+      puts "2"
+      @cars[number] = CargoCar.new
+      puts @cars[number]
+    else
+      incorrect_input_error_message
+    end
+    run
+  end
+
+  def case_9_choice_1_output
+    puts "Какого типа вагон хотите создать\n" \
+      "1 - Пассажирский\n" \
+      "2 - Грузовой"
+  end
+
+  def case_9_choice_2_output
+    puts "Введите номер(id) вагона"
+  end
+
+  ##### 0 #####
+  def case_0
     nil
   end
   
-  def case_10
-    puts 'Некорректный ввод'
+  def case_11
+    incorrect_input_error_message
     run
+  end
+
+  def incorrect_input_error_message
+    puts 'Некорректный ввод.'
   end
 
   def seed

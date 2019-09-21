@@ -3,10 +3,11 @@ class CargoTrain < Train
     @number = number
     @route = route
     @cars = []
+    @current_speed = 0
   end
 
-  def add_car
-    super(CargoCar.new)
+  def add_car(car)
+    super(car) if car.class == CargoCar
   end
 
 end

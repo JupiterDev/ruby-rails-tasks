@@ -68,20 +68,12 @@ class Train
 
   # прицепить вагон
   def add_car(car)
-    add_car!(car)
+    @cars << car
   end
 
   # отцепить вагон
-  def remove_car(index)
-    @cars.delete_at(index) if @current_speed.zero?
-  end
-
-  protected
-
-  # добавлен в protected, потому что не должен быть 
-  # вызван "из вне" класса, но может быть использован в подклассах
-  def add_car!(car)
-    @cars << car
+  def remove_car(car)
+    @cars.delete(car) if @current_speed.zero?
   end
 
 end
