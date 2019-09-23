@@ -3,16 +3,16 @@ class Station
   
   attr_reader :trains, :name
 
-  @@all = 0
-
-  def self.all
-    @@all
-  end
+  @@stations = []
 
   def initialize(name)
     @name = name
     @trains = []
-    @@all += 1
+    @@stations << self
+  end
+
+  def self.all
+    @@stations
   end
 
   # прием поезда
