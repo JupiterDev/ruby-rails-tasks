@@ -5,9 +5,11 @@ class Train
   attr_reader :number, :current_speed, :cars
 
   @@trains = {}
+  NUMBER_FORMAT = /^[a-zA-Z0-9]{3}-?[a-zA-Z0-9]{2}$/
 
   def initialize(number, route = nil)
     @number = number
+    validate!
     @cars = []
     @current_speed = 0
     @@trains[number] = self 
@@ -16,6 +18,17 @@ class Train
 
   def self.find(number)
     @@trains[number]
+  end
+
+  def valid?
+    validate!
+    true
+  rescue
+    false
+  end
+  
+  def validate!
+    raise 'Ошибка! Был введен невалидный номер поезда.' if @number !~ NUMBER_FORMAT
   end
 
   # добавление пути и выполнение "прибытия поезда" на станцию
