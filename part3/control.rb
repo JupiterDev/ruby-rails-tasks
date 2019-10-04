@@ -128,6 +128,7 @@ class Control
     create_train_final_output(number)
   rescue
     create_train_type_error
+    case_2
   end
 
   def create_train_number_error

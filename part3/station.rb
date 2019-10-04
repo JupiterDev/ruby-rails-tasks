@@ -7,12 +7,25 @@ class Station
 
   def initialize(name)
     @name = name
+    validate!
     @trains = []
     @@stations << self
   end
 
   def self.all
     @@stations
+  end
+
+  def valid?
+    validate!
+    true
+  rescue
+    false
+  end
+  
+  def validate!
+    raise 'Ошибка! Имя не может быть пустым значением.' unless @name
+    raise 'Ошибка! Имя должно быть больше 2 символов.' if @name.size < 3
   end
 
   # прием поезда
