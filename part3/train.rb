@@ -1,6 +1,7 @@
 class Train
   include Company
   include InstanceCounter
+  include Validation
 
   attr_reader :number, :current_speed, :cars
 
@@ -18,13 +19,6 @@ class Train
 
   def self.find(number)
     @@trains[number]
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
   end
   
   def validate!

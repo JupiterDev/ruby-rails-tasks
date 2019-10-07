@@ -1,5 +1,6 @@
 require_relative 'company_module'
 require_relative 'instance_counter_module'
+require_relative 'validation_module'
 require_relative 'train'
 require_relative 'station'
 require_relative 'route'
@@ -70,6 +71,9 @@ class Control
     case_1_start_output
     create_station(gets.chomp)
     run
+  rescue Exception => e
+    puts "#{e.message}"
+    retry
   end
 
   def case_1_start_output
@@ -91,8 +95,13 @@ class Control
     number = gets.chomp
     case_2_choice_output
     type = gets.to_i
+    raise "Ошибка! Введен неверный тип поезда." if type != 1 && type != 2
     create_train(number, type)
+    create_train_final_output(number)
     run
+  rescue Exception => e
+    puts "#{e.message}"
+    retry
   end
 
   def case_2_start_output
@@ -105,30 +114,40 @@ class Control
           'цифру 2, если хотите создать грузовой поезд'
   end
 
+  # def create_train(number, type)
+  #   if type == 1
+  #     begin
+  #       train = PassengerTrain.new(number)
+  #       @trains[train.number] = train
+  #     rescue
+  #       create_train_number_error
+  #       case_2
+  #     end
+  #   elsif type == 2
+  #     begin
+  #       train = CargoTrain.new(number)
+  #       @trains[train.number] = train
+  #     rescue
+  #       create_train_number_error
+  #       case_2
+  #     end
+  #   else
+  #     raise
+  #   end
+  #   create_train_final_output(number)
+  # rescue
+  #   create_train_type_error
+  #   case_2
+  # end
+
   def create_train(number, type)
     if type == 1
-      begin
-        train = PassengerTrain.new(number)
-        @trains[train.number] = train
-      rescue
-        create_train_number_error
-        case_2
-      end
+      train = PassengerTrain.new(number)
+      @trains[train.number] = train
     elsif type == 2
-      begin
-        train = CargoTrain.new(number)
-        @trains[train.number] = train
-      rescue
-        create_train_number_error
-        case_2
-      end
-    else
-      raise
+      train = CargoTrain.new(number)
+      @trains[train.number] = train
     end
-    create_train_final_output(number)
-  rescue
-    create_train_type_error
-    case_2
   end
 
   def create_train_number_error
@@ -156,6 +175,9 @@ class Control
     create_route(first_station, finish_station, route_name)
     manage_stations(route_name)
     run
+  rescue Exception => e
+    puts "#{e.message}"
+    retry
   end
 
   def case_3_choice_1_output
