@@ -114,32 +114,6 @@ class Control
           'цифру 2, если хотите создать грузовой поезд'
   end
 
-  # def create_train(number, type)
-  #   if type == 1
-  #     begin
-  #       train = PassengerTrain.new(number)
-  #       @trains[train.number] = train
-  #     rescue
-  #       create_train_number_error
-  #       case_2
-  #     end
-  #   elsif type == 2
-  #     begin
-  #       train = CargoTrain.new(number)
-  #       @trains[train.number] = train
-  #     rescue
-  #       create_train_number_error
-  #       case_2
-  #     end
-  #   else
-  #     raise
-  #   end
-  #   create_train_final_output(number)
-  # rescue
-  #   create_train_type_error
-  #   case_2
-  # end
-
   def create_train(number, type)
     if type == 1
       train = PassengerTrain.new(number)
