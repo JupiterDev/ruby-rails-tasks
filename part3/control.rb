@@ -415,13 +415,15 @@ class Control
     car_type = gets.chomp
     case_9_choice_2_output
     number = gets.chomp
+    case_9_choice_3_output
+    quantity = gets.chomp
     if car_type == "1"
       puts "1"
-      @cars[number] = PassengerCar.new
+      @cars[number] = PassengerCar.new(quantity)
       puts @cars[number]
     elsif car_type == "2"
       puts "2"
-      @cars[number] = CargoCar.new
+      @cars[number] = CargoCar.new(quantity)
       puts @cars[number]
     else
       incorrect_input_error_message
@@ -437,6 +439,10 @@ class Control
 
   def case_9_choice_2_output
     puts "Введите номер(id) вагона"
+  end
+
+  def case_9_choice_3_output
+    puts "Введите общий объем или общее кол-во мест"
   end
 
   ##### 0 #####

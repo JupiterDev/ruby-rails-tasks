@@ -13,6 +13,16 @@ class Station
     @@stations << self
   end
 
+  def train_action
+    @trains.each { |train| yield(train)} if block_given?
+  end
+
+  def train_list
+    train_action do |train|
+      puts "Тип: #{train.class}. Номер: #{train.number}. Вагонов: #{train.cars}."
+    end
+  end
+
   def self.all
     @@stations
   end

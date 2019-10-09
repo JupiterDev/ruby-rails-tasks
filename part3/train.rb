@@ -17,6 +17,16 @@ class Train
     set_route(route)
   end
 
+  def car_action
+    @cars.each { |car| yield(car)} if block_given?
+  end
+
+  def car_list
+    car_action do |car|
+      puts "Тип: #{car.class}. Свободно: #{car.units - car.occupied_units}. Занято: #{car.occupied_units}."
+    end
+  end
+
   def self.find(number)
     @@trains[number]
   end
