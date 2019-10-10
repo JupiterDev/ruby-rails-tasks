@@ -36,6 +36,8 @@ class Control
          "7 - Переместить поезд по маршруту вперед или назад\n" \
          "8 - Просмотреть список станций или список поездов на станции\n" \
          "9 - Создать вагон\n" \
+         "10 - Посмотреть список вагонов у поезда\n" \
+         "11 - Посмотреть список поездов на станции\n" \
          '0 - Выход'
   end
 
@@ -59,10 +61,14 @@ class Control
       case_8
     when 9
       case_9
+    when 10
+      case_10
+    when 11
+      case_11
     when 0
       case_0
     else
-      case_10
+      case_error
     end
   end
 
@@ -416,7 +422,7 @@ class Control
     case_9_choice_2_output
     number = gets.chomp
     case_9_choice_3_output
-    quantity = gets.chomp
+    quantity = gets.to_i
     if car_type == "1"
       puts "1"
       @cars[number] = PassengerCar.new(quantity)
@@ -445,12 +451,35 @@ class Control
     puts "Введите общий объем или общее кол-во мест"
   end
 
+  ##### 10 #####
+  def case_10
+    case_10_choice_output
+    number = gets.chomp
+    @trains[number].car_list
+    run
+  end
+
+  def case_10_choice_output
+    puts "Введите номер поезда"
+  end
+  
+  ##### 11 #####
+  def case_11
+    case_11_choice_output
+    name = gets.chomp
+    @stations[name].train_list
+  end
+
+  def case_11_choice_output
+    puts "Введите название станции"
+  end
+
   ##### 0 #####
   def case_0
     nil
   end
   
-  def case_11
+  def case_error
     incorrect_input_error_message
     run
   end
@@ -459,64 +488,64 @@ class Control
     puts 'Некорректный ввод.'
   end
 
-  def seed
-    # 1
-    create_train('346', 1)
-    create_train('465', 2)
-    create_train('678', 1)
-    create_train('253', 2)
-    puts 'TASK 1 DONE'
+  # def seed
+  #   # 1
+  #   create_train('346', 1)
+  #   create_train('465', 2)
+  #   create_train('678', 1)
+  #   create_train('253', 2)
+  #   puts 'TASK 1 DONE'
 
-    # 2
-    create_station('Station1')
-    create_station('Station5')
-    create_station('Station14')
-    create_station('Station23')
-    create_station('Station37')
-    puts 'TASK 2 DONE'
+  #   # 2
+  #   create_station('Station1')
+  #   create_station('Station5')
+  #   create_station('Station14')
+  #   create_station('Station23')
+  #   create_station('Station37')
+  #   puts 'TASK 2 DONE'
 
-    # 3
-    create_route('Station1', 'Station37', 'Main_route')
-    add_station('Main_route', 'Station5')
-    add_station('Main_route', 'Station14')
-    add_station('Main_route', 'Station23')
-    remove_station('Main_route', 'Station14')
-    puts 'TASK 3 DONE'
+  #   # 3
+  #   create_route('Station1', 'Station37', 'Main_route')
+  #   add_station('Main_route', 'Station5')
+  #   add_station('Main_route', 'Station14')
+  #   add_station('Main_route', 'Station23')
+  #   remove_station('Main_route', 'Station14')
+  #   puts 'TASK 3 DONE'
 
-    # 4
-    set_route('678', 'Main_route')
-    set_route('346', 'Main_route')
-    puts 'TASK 4 DONE'
+  #   # 4
+  #   set_route('678', 'Main_route')
+  #   set_route('346', 'Main_route')
+  #   puts 'TASK 4 DONE'
 
-    # 5
-    add_car('678', '1')
-    add_car('678', '2')
-    add_car('678', '5')
-    add_car('465', '99')
-    puts 'TASK 5 DONE'
+  #   # 5
+  #   add_car('678', '1')
+  #   add_car('678', '2')
+  #   add_car('678', '5')
+  #   add_car('465', '99')
+  #   puts 'TASK 5 DONE'
 
-    # 6
-    remove_car('678', '2')
-    puts 'TASK 6 DONE'
+  #   # 6
+  #   remove_car('678', '2')
+  #   puts 'TASK 6 DONE'
 
-    # 7
-    move_train_forward('465')
-    move_train_forward('465')
-    move_train_forward('465')
-    move_train_back('465')
-    puts 'TASK 7 DONE'
+  #   # 7
+  #   move_train_forward('465')
+  #   move_train_forward('465')
+  #   move_train_forward('465')
+  #   move_train_back('465')
+  #   puts 'TASK 7 DONE'
 
-    # 8
-    show_stations
-    puts 'Station1:'
-    show_trains('Station1')
-    puts 'Station5:'
-    show_trains('Station5')
-    puts 'Station14:'
-    show_trains('Station14')
-    puts 'Station23:'
-    show_trains('Station23')
-    puts 'TASK 8 DONE'
-  end
+  #   # 8
+  #   show_stations
+  #   puts 'Station1:'
+  #   show_trains('Station1')
+  #   puts 'Station5:'
+  #   show_trains('Station5')
+  #   puts 'Station14:'
+  #   show_trains('Station14')
+  #   puts 'Station23:'
+  #   show_trains('Station23')
+  #   puts 'TASK 8 DONE'
+  # end
 
 end

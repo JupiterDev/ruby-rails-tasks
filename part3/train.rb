@@ -23,7 +23,7 @@ class Train
 
   def car_list
     car_action do |car|
-      puts "Тип: #{car.class}. Свободно: #{car.units - car.occupied_units}. Занято: #{car.occupied_units}."
+      puts "Тип: #{car.class}. Свободно: #{car.available_units}. Занято: #{car.occupied_units}."
     end
   end
 

@@ -10,8 +10,6 @@ class Route
   end
   
   def validate!
-    # raise 'Ошибка! Начальная станция не может быть пустым значением.' unless stations[0]
-    # raise 'Ошибка! Конечная станция не может быть пустым значением.' unless stations[1]
     raise "Ошибка! Сущность, введенная как начальная станция, не является станцией." unless first_station.instance_of? Station
     raise "Ошибка! Сущность, введенная как конечная станция, не является станцией." unless finish_station.instance_of? Station
     raise "Ошибка! Начальная станция не может быть конечной станцией." if first_station === finish_station

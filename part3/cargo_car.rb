@@ -1,17 +1,8 @@
 class CargoCar < Car
-  # метод, который возвращает занятый объем
-  # метод, который возвращает оставшийся (доступный) объем
-  attr_reader :occupied_units, :units
-
-	def initialize(units)
-		# атрибут общего объема
-		@units = units
-		@occupied_units = 0
-  end
   
-  # метод, которые "занимает объем" в вагоне
-  def take_a_unit
-    @units -= 1 if @units > 0
-    @occupied_units += 1 if @units > 0
+  # метод, который "занимает объем" в вагоне
+  def take_units(value)
+    @available_units -= value if @available_units > 0 && @available_units >= value
   end
+
 end
