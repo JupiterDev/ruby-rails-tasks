@@ -1,7 +1,7 @@
 class Train
   include Company
   include InstanceCounter
-  include Validation
+  include Validate
 
   attr_reader :number, :current_speed, :cars
 

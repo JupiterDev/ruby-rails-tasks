@@ -1,6 +1,6 @@
 class Route
   include InstanceCounter
-  include Validation
+  include Validate
   
   attr_reader :stations
 
