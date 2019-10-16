@@ -1,10 +1,12 @@
 class Station
   include InstanceCounter
-  include Validate
+  include Validation
   
   attr_reader :trains, :name
 
   @@stations = []
+
+  validate :name, :presence
 
   def initialize(name)
     @name = name
@@ -26,21 +28,11 @@ class Station
   def self.all
     @@stations
   end
-  
-  def validate!
-    raise 'Ошибка! Имя не может быть пустым значением.' unless @name
-    raise 'Ошибка! Имя должно быть больше 2 символов.' if @name.size < 3
-  end
 
   # прием поезда
   def add_train(train)
     @trains << train
   end
-
-  # кол-во поездов на станции по типу
-  # def trains_by_type(type)
-  #   @trains.count { |train| train.type == type }
-  # end
 
   # отправка поезда
   def launch_train(train)

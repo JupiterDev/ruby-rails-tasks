@@ -1,18 +1,15 @@
 class Route
   include InstanceCounter
-  include Validate
+  include Validation
   
   attr_reader :stations
+
+  validate :start_station, :type, Station
+  validate :finish_station, :type, Station
 
   def initialize(start_station, finish_station)
     @stations = [start_station, finish_station]
     validate!
-  end
-  
-  def validate!
-    raise "Ошибка! Сущность, введенная как начальная станция, не является станцией." unless first_station.instance_of? Station
-    raise "Ошибка! Сущность, введенная как конечная станция, не является станцией." unless finish_station.instance_of? Station
-    raise "Ошибка! Начальная станция не может быть конечной станцией." if first_station === finish_station
   end
 
   def first_station

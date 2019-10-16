@@ -1,7 +1,7 @@
 class Train
   include Company
   include InstanceCounter
-  include Validate
+  include Validation
 
   attr_reader :number, :current_speed, :cars
 
@@ -13,7 +13,7 @@ class Train
     validate!
     @cars = []
     @current_speed = 0
-    @@trains[number] = self 
+    @@trains[number] = self
     set_route(route)
   end
 
@@ -29,10 +29,6 @@ class Train
 
   def self.find(number)
     @@trains[number]
-  end
-  
-  def validate!
-    raise 'Ошибка! Был введен невалидный номер поезда.' if @number !~ NUMBER_FORMAT
   end
 
   # добавление пути и выполнение "прибытия поезда" на станцию
